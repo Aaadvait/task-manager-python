@@ -1,0 +1,17 @@
+date,priority,completion,subject,tasktype,taskno,taskdisc
+2026-01-01,1,0,DE,Practical,8,This is the Discription of the Task
+2026-01-01,2,1,Math,Assignment,3,Integration worksheet
+2026-01-02,3,0,Physics,Study,5,Revise kinematics notes
+2026-01-02,1,1,CS,Project,1,Implement login system
+2026-01-03,2,0,DE,Study,9,Laplace transforms practice
+2026-01-03,3,0,Math,Assignment,4,Solve differential equations
+2026-01-04,1,1,CS,Practical,2,File handling experiment
+2026-01-04,2,0,Physics,Assignment,6,Numericals on motion
+2026-01-05,3,1,English,Study,1,Read short story
+2026-01-05,2,0,DE,Practical,10,Z-transform problems
+2026-01-06,1,0,CS,Project,3,Dashboard UI design
+2026-01-06,2,1,Math,Study,7,Limits and continuity revision
+2026-01-07,3,0,Physics,Study,8,Work and energy concepts
+2026-01-07,1,1,English,Assignment,2,Essay writing
+2026-01-08,2,0,CS,Practical,4,Database connectivity
+2026-01-08,3,1,DE,Study,11,Fourier series basics

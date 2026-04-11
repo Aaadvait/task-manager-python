@@ -1,10 +1,12 @@
-from global_gui import *
+from gui.global_gui import *
 from customtkinter import *
-from dashboard_gui import DASHBOARD_FRAME
-from managetask_gui import MANAGETASKS_FRAME
-from managesubject_gui import MANAGESUBJECT_FRAME
+from gui.dashboard_gui import DashboardFrame
+from gui.managetask_gui import ManageTasksFrame
+from gui.managesubject_gui import ManageSubjectFrame
 
-class BODY_FRAME:
+from data.task_read import TaskFileRead
+
+class BodyFrame:
 
     def __init__(self, parent):
 
@@ -121,7 +123,7 @@ class BODY_FRAME:
         self.button_click_reset()
         self.active_frame = "DB"
 
-        self.frame_class = DASHBOARD_FRAME(self.mainframe)
+        self.frame_class = DashboardFrame(self.mainframe)
 
         self.dashboard_button.configure(fg_color=self.active_color,
                                         hover_color=self.active_color,
@@ -131,7 +133,7 @@ class BODY_FRAME:
         self.button_click_reset()
         self.active_frame = "MT"
 
-        self.frame_class = MANAGETASKS_FRAME(self.mainframe)
+        self.frame_class = ManageTasksFrame(self.mainframe)
 
         self.managetask_button.configure(fg_color=self.active_color,
                                          hover_color=self.active_color,
@@ -141,7 +143,7 @@ class BODY_FRAME:
         self.button_click_reset()
         self.active_frame = "MS"
 
-        self.frame_class = MANAGESUBJECT_FRAME(self.mainframe)
+        self.frame_class = ManageSubjectFrame(self.mainframe)
 
         self.managesubject_button.configure(fg_color=self.active_color,
                                             hover_color=self.active_color,
@@ -154,6 +156,9 @@ class BODY_FRAME:
         self.dashboard_button.configure(fg_color=self.idle_color, hover_color=self.active_color, text_color=self.active_text)
         self.managetask_button.configure(fg_color=self.idle_color, hover_color=self.active_color, text_color=self.active_text)
         self.managesubject_button.configure(fg_color=self.idle_color, hover_color=self.active_color, text_color=self.active_text)
+
+        hkasdh = TaskFileRead()
+        hkasdh.save()
 
         if self.frame_class:
             self.frame_class.destroy_gui()

@@ -12,6 +12,7 @@ color_3 = "#000000"
 color_4 = "#000000"
 color_5 = "#000000"
 color_5a = "#000000"
+color_5b = "#000000"
 color_6 = "#000000"
 color_6a = "#000000"
 color_button = "#000000"
@@ -29,6 +30,8 @@ if theme == "dark":
 
     color_5 = "#9b8cf0"  # purple accent (slightly refined, less pastel)
     color_5a = "#453d6f"
+    color_5b = "#a598ef"
+    
     color_6 = "#4a8fd6"  # blue accent (info / links)
     color_6a = "#3e77b0"
 

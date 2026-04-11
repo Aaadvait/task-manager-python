@@ -1,7 +1,7 @@
 from customtkinter import *
-from global_gui import *
+from gui.global_gui import *
 
-class MANAGESUBJECT_FRAME():
+class ManageSubjectFrame():
     def __init__(self, parent):
         self.managesubject_frame = CTkFrame(parent,
                                         fg_color=color_mainframe,

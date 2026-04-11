@@ -1,7 +1,7 @@
 from customtkinter import *
-from global_gui import *
+from gui.global_gui import *
 
-class MANAGETASKS_FRAME():
+class ManageTasksFrame():
     def __init__(self, parent):
         self.managetask_frame = CTkFrame(parent,
                                         fg_color=color_mainframe,
