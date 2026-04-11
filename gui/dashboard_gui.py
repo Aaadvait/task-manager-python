@@ -1,254 +1,252 @@
-from idlelib.configdialog import font_sample_text
-
 from customtkinter import *
-
 from gui.global_gui import *
 from data.task_read import TaskFileRead
+from datetime import date
+import pandas as pd
 
+today = date.today()
+f_today = today.strftime("%d-%m-%Y")
+
+PAD = 18
+GAP = 8
 
 class DashboardFrame:
     def __init__(self, parent):
+        self.window_popup  = None
+        self.task_button   = None
+        self.app_state     = TaskFileRead()
+        self.data_frame    = self.app_state.df
 
-        self.window_popup = None
-
-        self.pad_value = 20
-        self.row_spacing = 8
-
-        self.app_state = TaskFileRead()
-        self.data_frame = self.app_state.df
+        # --- DATA ---
         self.high_priority = self.app_state.get_high_priority()
+        self.today_tasks   = self.app_state.df[
+            self.app_state.df["date"] == f_today
+        ]
 
-        # --- Main Frame ---
-        self.dashboard_frame = CTkFrame(
-            parent,
-            fg_color=color_mainframe,
-            corner_radius=0
+        # merge both
+        self.display_tasks = (
+            pd.concat([self.high_priority, self.today_tasks])
+            .drop_duplicates().sort_values(by=["priority", "date"], ascending=[True, True])
         )
-        self.dashboard_frame.grid(row=0, column=0, sticky='nsew')
-        self.dashboard_frame.rowconfigure(0, weight=1)
-        self.dashboard_frame.rowconfigure(1, weight=20)
-        self.dashboard_frame.columnconfigure(0, weight=1)
-
-        # --- Summary Frame ---
-        self.summary_frame = CTkFrame(
-            self.dashboard_frame,
-            fg_color=color_5a,
-            corner_radius=10
-        )
-        self.summary_frame.grid(
-            row=0, column=0,
-            sticky='nsew',
-            padx=self.pad_value,
-            pady=self.pad_value
-        )
-
-        # --- Below Summary Frame ---
-        self.below_summary_frame = CTkFrame(self.dashboard_frame, fg_color=color_5a)
-        self.below_summary_frame.grid(row=1,column=0,sticky='nsew',padx=self.pad_value,pady=self.pad_value)
-        self.below_summary_frame.columnconfigure(0, weight=1)
-        self.below_summary_frame.rowconfigure(0, weight=0)
-        self.below_summary_frame.rowconfigure(1, weight=1)
-
-        # --- Important Tasks Label ---
-        self.imptask_label = CTkLabel(
-            self.below_summary_frame,
-            text= "_ Important Tasks _",
-            font=("Bungee", 16),
-        )
-        self.imptask_label.grid(row=0,column=0,sticky='nsew')
-
-
-        # --- Task List Frame ---
-        self.tasklist_frame = CTkScrollableFrame(
-            self.below_summary_frame,
-            fg_color="transparent",
-            scrollbar_button_color=color_5a,
-            scrollbar_button_hover_color=color_5
-        )
-        self.tasklist_frame.grid(
-            row=1, column=0,
-            sticky='nsew',
-        )
-        self.tasklist_frame.columnconfigure(0, weight=1)
 
         self.task_rows = []
+
+        # --- UI ---
+        self.dashboard_frame = CTkFrame(parent, fg_color=C_PAGE, corner_radius=0)
+        self.dashboard_frame.grid(row=0, column=0, sticky="nsew")
+        self.dashboard_frame.rowconfigure(0, weight=0)
+        self.dashboard_frame.rowconfigure(1, weight=0)
+        self.dashboard_frame.rowconfigure(2, weight=1)
+        self.dashboard_frame.columnconfigure(0, weight=1)
+
+        self._build_topbar()
+        self._build_stats()
+        self._build_task_panel()
+
+    # ── Top bar ─────────────────────────────────────────────
+    def _build_topbar(self):
+        bar = CTkFrame(self.dashboard_frame, fg_color="transparent")
+        bar.grid(row=0, column=0, sticky="ew", padx=PAD, pady=(PAD, 8))
+        bar.columnconfigure(0, weight=1)
+
+        CTkLabel(bar, text="Task Dashboard", font=F_HEAD,
+                 text_color=C_TEXT, anchor="w").grid(row=0, column=0, sticky="w")
+        CTkLabel(bar, text=f"Today: {f_today}", font=F_SUB,
+                 text_color=C_MUTED, anchor="w").grid(row=1, column=0, sticky="w")
+
+        avatar = CTkFrame(bar, fg_color=C_VIOLET, width=36, height=36, corner_radius=18)
+        avatar.grid(row=0, column=1, rowspan=2, sticky="e")
+        CTkLabel(avatar, text="XIE", font=("DM Sans", 14, "bold"),
+                 text_color=C_TEXT, width=36, height=36).pack()
+
+    # ── Stats ───────────────────────────────────────────────
+    def _build_stats(self):
+        row_f = CTkFrame(self.dashboard_frame, fg_color="transparent")
+        row_f.grid(row=1, column=0, sticky="ew", padx=PAD, pady=(0, 10))
+        row_f.columnconfigure((0, 1, 2), weight=1)
+
+        total = len(self.app_state.df[self.app_state.df["completion"] == 0])
+        high  = len(self.high_priority)
+        done  = int(self.app_state.df["completion"].sum()) \
+                if "completion" in self.app_state.df.columns else 0
+
+        specs = [
+            ("TOTAL",    str(total), C_VIOLET, "tasks"),
+            ("PRIORITY", str(high),  C_ROSE,   "need attention"),
+            ("DONE",     str(done),  C_TEAL,   "completed"),
+        ]
+
+        for col, (lbl, val, accent, sub) in enumerate(specs):
+            pad_l = 0 if col == 0 else 6
+            pad_r = 6 if col < 2 else 0
+
+            tile = CTkFrame(row_f, fg_color=C_CARD, corner_radius=12,
+                            border_width=1, border_color=C_BORDER)
+            tile.grid(row=0, column=col, padx=(pad_l, pad_r), sticky="nsew")
+
+            CTkFrame(tile, fg_color=accent, height=2).pack(fill="x")
+
+            inner = CTkFrame(tile, fg_color="transparent")
+            inner.pack(fill="both", expand=True, padx=14, pady=10)
+
+            CTkLabel(inner, text=lbl, font=("DM Mono", 10, "bold"),
+                     text_color=C_MUTED).pack(anchor="w")
+            CTkLabel(inner, text=val, font=("DM Mono", 28, "bold"),
+                     text_color=accent).pack(anchor="w")
+            CTkLabel(inner, text=sub, font=F_MONO_S,
+                     text_color=accent).pack(anchor="w")
+
+    # ── Task Panel ──────────────────────────────────────────
+    def _build_task_panel(self):
+        panel = CTkFrame(self.dashboard_frame, fg_color=C_CARD,
+                         corner_radius=14, border_width=1, border_color=C_BORDER)
+        panel.grid(row=2, column=0, sticky="nsew", padx=PAD, pady=(0, PAD))
+        panel.rowconfigure(2, weight=1)
+        panel.columnconfigure(0, weight=1)
+        self.panel = panel
+
+        hdr = CTkFrame(panel, fg_color="transparent")
+        hdr.grid(row=0, column=0, sticky="ew", padx=16, pady=(14, 10))
+        hdr.columnconfigure(0, weight=1)
+
+        left = CTkFrame(hdr, fg_color="transparent")
+        left.grid(row=0, column=0, sticky="w")
+        CTkFrame(left, fg_color=C_VIOLET, width=4, height=20).grid(row=0, column=0)
+        CTkLabel(left, text="  Tasks",
+                 font=("DM Sans", 13, "bold"),
+                 text_color=C_TEXT).grid(row=0, column=1)
+
+        self.count_badge = CTkLabel(
+            hdr,
+            text=f"  {len(self.display_tasks)} tasks  ",
+            font=("DM Mono", 11, "bold"),
+            fg_color=C_VIOLET_DIM,
+            text_color="#9B8FE8",
+            corner_radius=10
+        )
+        self.count_badge.grid(row=0, column=1, sticky="e")
+
+        CTkFrame(panel, fg_color=C_BORDER, height=1).grid(
+            row=1, column=0, sticky="ew", padx=16, pady=(0, 6)
+        )
+
+        self.tasklist_frame = CTkScrollableFrame(
+            panel, fg_color="transparent",
+            scrollbar_button_color=C_CARD2,
+            scrollbar_button_hover_color=C_VIOLET
+        )
+        self.tasklist_frame.grid(row=2, column=0, sticky="nsew",
+                                 padx=10, pady=(0, 10))
+        self.tasklist_frame.columnconfigure(0, weight=1)
+
         self.build_task_list()
 
-    # -----------------------------
-
+    # ── Task List ───────────────────────────────────────────
     def build_task_list(self):
-        for i, row in enumerate(self.high_priority.itertuples()):
-            button_string = f"-> {row.subject} {row.tasktype} No.{row.taskno}"
-            action = lambda x=button_string: self.on_click(x)
+        for i, row in enumerate(self.display_tasks.itertuples()):
+            action = lambda x=row: self.on_click(x)
 
-            row_frame = CTkFrame(
-                self.tasklist_frame,
-                corner_radius=8,
-                fg_color=color_5
-            )
-            row_frame.grid(
-                row=i,
-                column=0,
-                sticky="ew",
-                padx=10,
-                pady=self.row_spacing
-            )
-            row_frame.columnconfigure(0, weight=4)
-            row_frame.columnconfigure(1, weight=1)
+            rf = CTkFrame(self.tasklist_frame, fg_color=C_CARD2,
+                          corner_radius=10, border_width=1, border_color=C_BORDER)
+            rf.grid(row=i, column=0, sticky="ew", padx=4, pady=GAP // 2)
+            rf.columnconfigure(1, weight=1)
 
-            btn = CTkButton(
-                row_frame,
-                text=button_string,
-                height=36,
-                anchor='w',
-                font=("Bungee", 12),
-                fg_color="transparent",
-                hover_color=color_5b,
-                text_color="white",
-                command=action
-            )
-            btn.grid(row=0, column=0, sticky="ew", padx=10, pady=6)
+            # color logic
+            color_state = 0
 
-            actions_frame = CTkFrame(row_frame, fg_color="transparent")
-            actions_frame.grid(row=0, column=1, sticky="e", padx=10)
+            if row.Index in self.high_priority.index:
+                dot_color = C_ROSE
+                color_state +=1
+            if row.Index in self.today_tasks.index:
+                dot_color = C_VIOLET
+                color_state +=1
+            if color_state == 2:
+                dot_color = C_RED
 
-            complete_btn = CTkButton(
-                actions_frame,
-                text="Complete",
-                width=36,
-                height=28,
-                font=("Bungee", 12),
-                fg_color=color_6a,
-                hover_color=color_6,
-                command=lambda idx=i: self.complete_task(idx)
-            )
-            complete_btn.pack(side="left", padx=(0, 5))
+            dot = CTkFrame(rf, fg_color=dot_color, width=8, height=8, corner_radius=4)
+            dot.grid(row=0, column=0, padx=(14, 0))
 
-            remove_btn = CTkButton(
-                actions_frame,
-                text="Remove",
-                width=36,
-                height=28,
-                font=("Bungee", 12),
-                fg_color=color_6a,
-                hover_color=color_6,
-                command=lambda idx=i: self.confirmation_window(idx)
-            )
-            remove_btn.pack(side="left")
+            txt = CTkFrame(rf, fg_color="transparent")
+            txt.grid(row=0, column=1, sticky="w", padx=10, pady=10)
 
-            task_item = {
-                "frame": row_frame,
-                "main_btn": btn,
+            subj_btn = CTkButton(txt, text=row.subject,
+                                 font=("DM Sans", 12, "bold"),
+                                 fg_color="transparent", hover_color=C_CARD,
+                                 text_color=C_TEXT2, anchor="w", height=20,
+                                 command=action)
+            subj_btn.pack(anchor="w")
+
+            tag_row = CTkFrame(txt, fg_color="transparent")
+            tag_row.pack(anchor="w", pady=(4, 0))
+            CTkLabel(tag_row, text=f" {row.tasktype} ", font=F_TAG,
+                     fg_color=C_VIOLET_DIM, text_color="#9B8FE8",
+                     corner_radius=5).pack(side="left", padx=(0, 4))
+            CTkLabel(tag_row, text=f" #{row.taskno} ", font=F_TAG,
+                     fg_color=C_CARD, text_color=C_MUTED,
+                     corner_radius=5).pack(side="left")
+
+            af = CTkFrame(rf, fg_color="transparent")
+            af.grid(row=0, column=2, sticky="e", padx=(0, 12))
+
+            cbtn = CTkButton(af, text="Complete",
+                             width=96, height=28, font=F_BTN,
+                             fg_color=C_TEAL_DIM, hover_color=C_TEAL,
+                             text_color=C_TEAL, border_width=1,
+                             border_color=C_TEAL_BRD, corner_radius=8,
+                             command=lambda idx=i: self.complete_task(idx))
+            cbtn.pack(side="left", padx=(0, 6))
+
+            CTkButton(af, text="Remove",
+                      width=86, height=28, font=F_BTN,
+                      fg_color=C_ROSE_DIM, hover_color=C_ROSE,
+                      text_color=C_ROSE, border_width=1,
+                      border_color=C_ROSE_BRD, corner_radius=8,
+                      command=lambda idx=i: self.confirmation_window(idx)
+                      ).pack(side="left")
+
+            self.task_rows.append({
+                "frame": rf,
+                "main_btn": subj_btn,
+                "dot": dot,
                 "data": row,
-                "cbtn": complete_btn,
-                "cbtn_st": 0
-            }
-            self.task_rows.append(task_item)
+                "cbtn": cbtn,
+                "cbtn_st": 0,
+            })
 
-    # -----------------------------
-
+    # ── Handlers (unchanged) ───────────────────────────────
     def on_click(self, x):
         pass
 
-    # -----------------------------
-
     def complete_task(self, idx):
         item = self.task_rows[idx]
-        row = item["data"]
+        row  = item["data"]
 
         if item["cbtn_st"] == 0:
             self.app_state.df.loc[
-                self.app_state.df["taskno"] == row.taskno, "completion"
+                (self.app_state.df["subject"] == row.subject) &
+                (self.app_state.df["tasktype"] == row.tasktype) &
+                (self.app_state.df["taskno"] == row.taskno),
+                "completion"
             ] = 1
-
-            item["main_btn"].configure(text_color=color_3)
-            item["cbtn"].configure(text="Completed")
+            item["main_btn"].configure(text_color=C_MUTED)
+            item["dot"].configure(fg_color=C_TEAL)
+            item["cbtn"].configure(text="Completed", fg_color=C_TEAL,
+                                   text_color="#0B0D17", border_color=C_TEAL)
             item["cbtn_st"] = 1
-
         else:
             self.app_state.df.loc[
-                self.app_state.df["taskno"] == row.taskno, "completion"
+                (self.app_state.df["subject"] == row.subject) &
+                (self.app_state.df["tasktype"] == row.tasktype) &
+                (self.app_state.df["taskno"] == row.taskno),
+                "completion"
             ] = 0
-
-            item["main_btn"].configure(text_color=color_4)
-            item["cbtn"].configure(text="Complete")
+            item["main_btn"].configure(text_color=C_TEXT2)
+            item["dot"].configure(fg_color=C_ROSE)
+            item["cbtn"].configure(text="Complete", fg_color=C_TEAL_DIM,
+                                   text_color=C_TEAL, border_color=C_TEAL_BRD)
             item["cbtn_st"] = 0
 
         self.app_state.save()
-
-    # -----------------------------
-
-    def remove_task(self, idx):
-
-        self.window_popup.destroy()
-
-        item = self.task_rows[idx]
-        row = item["data"]
-
-        self.app_state.df = self.app_state.df[
-            self.app_state.df["taskno"] != row.taskno
-        ]
-
-        self.app_state.save()
-
-        # Refresh UI
-        for item in self.task_rows:
-            item["frame"].destroy()
-
-        self.task_rows.clear()
-        self.high_priority = self.app_state.get_high_priority()
-        self.build_task_list()
-
-    # -----------------------------
-
-    def confirmation_window(self, idx):
-        self.window_popup = CTkToplevel(self.dashboard_frame, fg_color=color_base)
-        self.window_popup.geometry("300x150")
-        self.window_popup.grab_set()
-        self.window_popup.title("NOTICE!")
-        self.window_popup.iconbitmap(delete_cross_icon)
-
-        self.window_popup.update_idletasks()
-
-        width = 300
-        height = 150
-
-        parent_x = self.window_popup.master.winfo_rootx()
-        parent_y = self.window_popup.master.winfo_rooty()
-        parent_width = self.window_popup.master.winfo_width()
-        parent_height = self.window_popup.master.winfo_height()
-
-        x = parent_x + (parent_width // 2) - (width // 2)
-        y = parent_y + (parent_height // 2) - (height // 2)
-        self.window_popup.geometry(f"{width}x{height}+{x}+{y}")
-
-        label = CTkLabel(
-            self.window_popup,
-            text="Remove task?",
-            font=("Arial", 16)
-        )
-        label.pack(pady=(25, 15))
-
-        btn_frame = CTkFrame(self.window_popup, fg_color="transparent")
-        btn_frame.pack(pady=10)
-
-        yes_btn = CTkButton(
-            btn_frame,
-            text="Yes",
-            width=100,
-            command=lambda: self.remove_task(idx),
-        )
-        yes_btn.pack(side="left", padx=10)
-
-        no_btn = CTkButton(
-            btn_frame,
-            text="No",
-            width=100,
-            command=self.window_popup.destroy
-        )
-        no_btn.pack(side="left", padx=10)
-
-    # -----------------------------
 
     def destroy_gui(self):
         self.dashboard_frame.destroy()
