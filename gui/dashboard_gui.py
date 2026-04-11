@@ -17,6 +17,7 @@ class DashboardFrame:
         self.app_state = TaskFileRead()
         self.data_frame = self.app_state.df
         self.high_priority = self.app_state.get_high_priority()
+        self.all_tasks = self.app_state.get_all_pending()    #for all the non importaint tasks whichh will be displayed top top box 
 
         # --- Main Frame ---
         self.dashboard_frame = CTkFrame(
@@ -73,9 +74,21 @@ class DashboardFrame:
 
         self.task_rows = []
         self.build_task_list()
+        self.build_all_task_list()  #this ive added for all tasks to be visible 
 
     # -----------------------------
+    def build_all_task_list(self):   #played around for a bit but ig backend is good to go UI needs fix
+        for i, row in enumerate(self.all_tasks.itertuples()):
+            text = f"{row.subject} {row.tasktype} No.{row.taskno}"
 
+            lbl = CTkLabel(
+            self.alltask_frame,
+            text=text,
+            anchor="w",
+            font=("Bungee", 12)
+            )
+            lbl.pack(fill="x", padx=10, pady=5)
+    #------------------------------------
     def build_task_list(self):
         for i, row in enumerate(self.high_priority.itertuples()):
             button_string = f"-> {row.subject} {row.tasktype} No.{row.taskno}"
