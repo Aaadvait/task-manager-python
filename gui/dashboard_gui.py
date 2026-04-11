@@ -248,5 +248,65 @@ class DashboardFrame:
 
         self.app_state.save()
 
+    def remove_task(self, idx):
+        self.window_popup.destroy()
+        item = self.task_rows[idx]
+        self.app_state.df = self.app_state.df[
+            self.app_state.df["taskno"] != item["data"].taskno]
+        self.app_state.save()
+        for t in self.task_rows:
+            t["frame"].destroy()
+        self.task_rows.clear()
+        self.high_priority = self.app_state.get_high_priority()
+        self.build_task_list()
+        self.count_badge.configure(text=f"  {len(self.high_priority)} tasks  ")
+
+    def confirmation_window(self, idx):
+        popup = CTkToplevel(self.dashboard_frame, fg_color=C_PAGE)
+        popup.geometry("320x170")
+        popup.grab_set()
+        popup.title("Confirm Removal")
+        popup.resizable(False, False)
+        self.window_popup = popup
+
+        popup.update_idletasks()
+        px, py = popup.master.winfo_rootx(), popup.master.winfo_rooty()
+        pw, ph = popup.master.winfo_width(), popup.master.winfo_height()
+        popup.geometry(f"320x170+{px + pw // 2 - 160}+{py + ph // 2 - 85}")
+
+        card = CTkFrame(popup, fg_color=C_CARD, corner_radius=14,
+                        border_width=1, border_color="#2D1F40")
+        card.pack(fill="both", expand=True, padx=12, pady=12)
+
+        top = CTkFrame(card, fg_color="transparent")
+        top.pack(fill="x", padx=18, pady=(16, 12))
+
+        icon_bg = CTkFrame(top, fg_color=C_ROSE_DIM, width=36, height=36,
+                           corner_radius=8, border_width=1, border_color=C_ROSE_BRD)
+        icon_bg.pack(side="left")
+        CTkLabel(icon_bg, text="!", font=("DM Sans", 18, "bold"),
+                 text_color=C_ROSE, width=36, height=36).pack()
+
+        txt = CTkFrame(top, fg_color="transparent")
+        txt.pack(side="left", padx=12)
+        CTkLabel(txt, text="Remove this task?",
+                 font=("DM Sans", 13, "bold"), text_color=C_TEXT,
+                 anchor="w").pack(anchor="w")
+        CTkLabel(txt, text="This action cannot be undone.",
+                 font=F_SUB, text_color=C_MUTED, anchor="w").pack(anchor="w")
+
+        brow = CTkFrame(card, fg_color="transparent")
+        brow.pack(pady=(0, 14))
+        CTkButton(brow, text="Yes, Remove", width=120, height=32,
+                  font=("DM Sans", 12, "bold"),
+                  fg_color=C_ROSE, hover_color="#B8405E",
+                  text_color="#fff", corner_radius=8,
+                  command=lambda: self.remove_task(idx)).pack(side="left", padx=(0, 8))
+        CTkButton(brow, text="Cancel", width=100, height=32,
+                  font=("DM Sans", 12, "bold"),
+                  fg_color=C_CARD2, hover_color=C_BORDER,
+                  text_color="#9B8FE8", border_width=1, border_color=C_BORDER2,
+                  corner_radius=8, command=popup.destroy).pack(side="left")
+
     def destroy_gui(self):
         self.dashboard_frame.destroy()
