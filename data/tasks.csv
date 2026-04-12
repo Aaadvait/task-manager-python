@@ -1,6 +1,6 @@
 date,priority,completion,subject,tasktype,taskno,taskdisc
-12-04-2026,1,0,DE,Practical,8,This is the Discription of the Task
-12-04-2026,2,0,Math,Assignment,3,Integration worksheet
+12-04-2026,1,1,DE,Practical,8,This is the Discription of the Task
+12-04-2026,2,1,Math,Assignment,3,Integration worksheet
 12-04-2026,2,0,Physics,Study,5,Revise kinematics notes
 12-04-2026,1,0,CS,Project,1,Implement login system
 13-04-2026,2,0,DE,Study,9,Laplace transforms practice

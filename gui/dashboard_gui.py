@@ -42,7 +42,7 @@ class DashboardFrame:
         self._build_stats()
         self._build_task_panel()
 
-    # ── Top bar ─────────────────────────────────────────────
+    # ----- Top Bar --------------------
     def _build_topbar(self):
         bar = CTkFrame(self.dashboard_frame, fg_color="transparent")
         bar.grid(row=0, column=0, sticky="ew", padx=PAD, pady=(PAD, 8))
@@ -53,12 +53,12 @@ class DashboardFrame:
         CTkLabel(bar, text=f"Today: {f_today}", font=F_SUB,
                  text_color=C_MUTED, anchor="w").grid(row=1, column=0, sticky="w")
 
-        avatar = CTkFrame(bar, fg_color=C_VIOLET, width=36, height=36, corner_radius=18)
-        avatar.grid(row=0, column=1, rowspan=2, sticky="e")
-        CTkLabel(avatar, text="XIE", font=("DM Sans", 14, "bold"),
+        icon_logo = CTkFrame(bar, fg_color=C_VIOLET, width=36, height=36, corner_radius=18)
+        icon_logo.grid(row=0, column=1, rowspan=2, sticky="e")
+        CTkLabel(icon_logo, text="TM", font=("DM Sans", 14, "bold"),
                  text_color=C_TEXT, width=36, height=36).pack()
 
-    # ── Stats ───────────────────────────────────────────────
+    # ----- Stats --------------------
     def _build_stats(self):
         row_f = CTkFrame(self.dashboard_frame, fg_color="transparent")
         row_f.grid(row=1, column=0, sticky="ew", padx=PAD, pady=(0, 10))
@@ -202,7 +202,7 @@ class DashboardFrame:
 
             cbtn = CTkButton(af, text="Complete",
                              width=96, height=28, font=F_BTN,
-                             fg_color=C_TEAL_DIM, hover_color=C_TEAL,
+                             fg_color=C_TEAL_DIM, hover_color=C_TEAL_HOV,
                              text_color=C_TEAL, border_width=1,
                              border_color=C_TEAL_BRD, corner_radius=8,
                              command=lambda idx=i: self.complete_task(idx))
@@ -210,7 +210,7 @@ class DashboardFrame:
 
             CTkButton(af, text="Remove",
                       width=86, height=28, font=F_BTN,
-                      fg_color=C_ROSE_DIM, hover_color=C_ROSE,
+                      fg_color=C_ROSE_DIM, hover_color=C_ROSE_HOV,
                       text_color=C_ROSE, border_width=1,
                       border_color=C_ROSE_BRD, corner_radius=8,
                       command=lambda idx=i: self.confirmation_window(idx)
@@ -254,7 +254,7 @@ class DashboardFrame:
                 "completion"
             ] = 0
             item["main_btn"].configure(text_color=C_TEXT2)
-            item["dot"].configure(fg_color=C_ROSE)
+            item["dot"].configure(fg_color=C_VIOLET)
             item["cbtn"].configure(text="Complete", fg_color=C_TEAL_DIM,
                                    text_color=C_TEAL, border_color=C_TEAL_BRD)
             item["cbtn_st"] = 0
@@ -325,7 +325,7 @@ class DashboardFrame:
         icon_bg = CTkFrame(top, fg_color=C_ROSE_DIM, width=36, height=36,
                            corner_radius=8, border_width=1, border_color=C_ROSE_BRD)
         icon_bg.pack(side="left")
-        CTkLabel(icon_bg, text="!", font=("DM Sans", 18, "bold"),
+        CTkLabel(icon_bg, text="<!>", font=("DM Sans", 18, "bold"),
                  text_color=C_ROSE, width=36, height=36).pack()
 
         txt = CTkFrame(top, fg_color="transparent")
