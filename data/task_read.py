@@ -5,10 +5,27 @@ import pandas as pd
 today = date.today()
 f_today = today.strftime("%d-%m-%Y")
 
+
 class TaskFileRead():
     def __init__(self):
         self.df = pd.read_csv(taskfile_loc)
         self.sf = pd.read_csv(subject_file_loc)
+
+    # --- ADD TASK ------------------------
+
+    def add_task(self, date, priority, completion, subject, tasktype, taskno, taskdisc):
+        new_row = pd.DataFrame([{
+            "date": date,
+            "priority": int(priority),
+            "completion": int(completion),
+            "subject": subject,
+            "tasktype": tasktype,
+            "taskno": int(taskno),
+            "taskdisc": taskdisc.strip()
+        }])
+
+        self.df = pd.concat([self.df, new_row], ignore_index=True)
+        self.save()
 
     # --- Get Data ------------
 
@@ -25,7 +42,7 @@ class TaskFileRead():
         return self.df[
             (self.df["date"] == f_today) &
             (self.df["completion"] == 0)
-        ]
+            ]
 
     def get_overdue(self):
         return self.df[
@@ -42,7 +59,53 @@ class TaskFileRead():
     # --- Get Subjects ------------
 
     def refresh_subject_list(self):
-        self.df = pd.read_csv(taskfile_loc)
+        self.sf = pd.read_csv(subject_file_loc)
+
+    def add_subject(self, subject):
+        subject = subject.strip()
+
+        if subject == "":
+            raise Exception("Subject cannot be empty")
+
+        if subject in self.sf["subject"].values:
+            raise Exception("Subject already exists")
+
+        new_row = pd.DataFrame({"subject": [subject]})
+        self.sf = pd.concat([self.sf, new_row], ignore_index=True)
+
+        self.sf.to_csv(subject_file_loc, index=False)
+
+    def rename_subject(self, old, new):
+        new = new.strip()
+
+        if new == "":
+            raise Exception("Subject cannot be empty")
+
+        if new in self.sf["subject"].values:
+            raise Exception("Subject already exists")
+
+        if old not in self.sf["subject"].values:
+            raise Exception("Subject not found")
+
+        # update subject list
+        self.sf.loc[self.sf["subject"] == old, "subject"] = new
+        self.sf.to_csv(subject_file_loc, index=False)
+
+        # update tasks as well
+        self.df.loc[self.df["subject"] == old, "subject"] = new
+        self.save()
+
+    def delete_subject(self, subject):
+        if subject not in self.sf["subject"].values:
+            raise Exception("Subject not found")
+
+        # remove from subject list
+        self.sf = self.sf[self.sf["subject"] != subject].reset_index(drop=True)
+        self.sf.to_csv(subject_file_loc, index=False)
+
+        # remove all related tasks
+        self.df = self.df[self.df["subject"] != subject].reset_index(drop=True)
+        self.save()
 
     # --- SAVE ---
     def save(self):
