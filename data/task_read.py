@@ -14,16 +14,33 @@ class TaskFileRead():
     # --- ADD TASK ------------------------
 
     def add_task(self, date, priority, completion, subject, tasktype, taskno, taskdisc):
+
+        # --- Normalize inputs ---
+        subject = subject.strip()
+        tasktype = tasktype.strip()
+        taskno = int(taskno)
+
+        # --- Duplicate check ---
+        mask = (
+                (self.df["subject"] == subject) &
+                (self.df["tasktype"] == tasktype) &
+                (self.df["taskno"] == taskno)
+        )
+        if mask.any():
+            raise Exception("Duplicate Task: same subject, type, and task number already exists")
+
+        # --- Add task if no DUplicate found
         new_row = pd.DataFrame([{
             "date": date,
             "priority": int(priority),
             "completion": int(completion),
             "subject": subject,
             "tasktype": tasktype,
-            "taskno": int(taskno),
+            "taskno": taskno,
             "taskdisc": taskdisc.strip()
         }])
 
+        # --- Insert ---------------
         self.df = pd.concat([self.df, new_row], ignore_index=True)
         self.save()
 

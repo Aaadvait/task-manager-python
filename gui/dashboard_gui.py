@@ -186,7 +186,7 @@ class DashboardFrame:
                                      font=("DM Sans", 12, "bold"),
                                      fg_color="transparent", hover_color=C_CARD,
                                      text_color=C_TEXT2, anchor="w", height=20,
-                                     command=lambda idx=i: self.complete_task(idx))
+                                     command=action)
                 subj_btn.pack(anchor="w")
 
                 tag_row = CTkFrame(txt, fg_color="transparent")
@@ -247,7 +247,93 @@ class DashboardFrame:
     # --- Button Click Functions ---------------
 
     def on_click(self, x):
-        pass
+        popup = CTkToplevel(self.dashboard_frame, fg_color=C_PAGE)
+        popup.geometry("420x320")
+        popup.title("Task Details")
+        popup.resizable(False, False)
+        popup.grab_set()
+
+        # Center popup
+        popup.update_idletasks()
+        px, py = popup.master.winfo_rootx(), popup.master.winfo_rooty()
+        pw, ph = popup.master.winfo_width(), popup.master.winfo_height()
+        popup.geometry(f"420x320+{px + pw // 2 - 210}+{py + ph // 2 - 160}")
+
+        # --- Card ---
+        card = CTkFrame(popup, fg_color=C_CARD, corner_radius=14,
+                        border_width=1, border_color=C_BORDER)
+        card.pack(fill="both", expand=True, padx=14, pady=14)
+
+        # --- Title ---
+        CTkLabel(card,
+                 text=f"{x.subject}",
+                 font=F_HEAD,
+                 text_color=C_TEXT).pack(anchor="w", padx=16, pady=(12, 4))
+
+        # --- Info row ---
+        info = CTkFrame(card, fg_color="transparent")
+        info.pack(anchor="w", padx=16, pady=(0, 10))
+
+        CTkLabel(info,
+                 text=f"{x.tasktype} - {x.taskno}",
+                 font=F_TAG,
+                 fg_color=C_VIOLET_DIM,
+                 text_color=C_VIOLET,
+                 corner_radius=6).pack(side="left", padx=(0, 6))
+
+        CTkLabel(info,
+                 text=f"Due: {x.date}",
+                 font=F_TAG,
+                 fg_color=C_CARD2,
+                 text_color=C_TEXT2,
+                 corner_radius=6).pack(side="left")
+
+        # --- Meta ---
+        meta = CTkFrame(card, fg_color="transparent")
+        meta.pack(anchor="w", padx=16, pady=(0, 10))
+
+        priority_text = "High" if x.priority == 1 else "Low"
+        completion_text = "Completed" if x.completion == 1 else "Pending"
+
+        CTkLabel(meta,
+                 text=f"Priority: {priority_text}",
+                 font=F_BODY,
+                 text_color=C_TEXT).pack(anchor="w")
+
+        CTkLabel(meta,
+                 text=f"Status: {completion_text}",
+                 font=F_BODY,
+                 text_color=C_TEXT).pack(anchor="w")
+
+        # --- Description ---
+        CTkLabel(card,
+                 text="Description:",
+                 font=F_LABEL,
+                 text_color=C_TEXT).pack(anchor="w", padx=16, pady=(6, 2))
+
+        desc_box = CTkTextbox(card,
+                              height=100,
+                              fg_color=C_CARD2,
+                              text_color=C_TEXT,
+                              border_width=1,
+                              border_color=C_BORDER)
+        desc_box.pack(fill="both", expand=False, padx=16, pady=(0, 12))
+
+        desc_box.insert("1.0", x.taskdisc)
+        desc_box.configure(state="disabled")
+
+        # --- Close Button ---
+        CTkButton(card,
+                  text="Close",
+                  height=32,
+                  font=F_BTN,
+                  fg_color=C_VIOLET_DIM,
+                  hover_color=C_VIOLET_BRD,
+                  text_color=C_VIOLET,
+                  border_width=1,
+                  border_color=C_VIOLET_BRD,
+                  corner_radius=8,
+                  command=popup.destroy).pack(pady=(0, 12))
 
     def complete_task(self, idx):
         item = self.task_rows[idx]

@@ -61,7 +61,7 @@ class AddTaskSubFrame:
         form.grid_columnconfigure((0, 1), weight=1)
 
         # Date
-        CTkLabel(form, text="Enter Date: ", font=F_ATLF, text_color=C_TEXT2).grid(row=0, column=0, sticky="w")
+        CTkLabel(form, text="Enter Date :", font=F_ATLF, text_color=C_TEXT2).grid(row=0, column=0, sticky="w")
 
         self.date_entry_grid = CTkFrame(form, height=32, fg_color="transparent")
         self.date_entry_grid.grid(row=1, column=0, sticky="ew", padx=(0, 8), pady=(4,12))
@@ -70,30 +70,29 @@ class AddTaskSubFrame:
         self.date_entry_grid.rowconfigure(0, weight=1)
 
         self.date_day = CTkEntry(self.date_entry_grid, height=32, width=36,
-                                 placeholder_text="DD", font=F_SUB,
+                                 placeholder_text="DD", font=F_SUB, text_color=C_TEXT, placeholder_text_color=C_MUTED,
                                  fg_color=C_VIOLET_DIM, border_color=C_VIOLET_BRD)
         self.date_day.grid(row=0, column=0, padx=(0,8))
 
         self.date_month = CTkEntry(self.date_entry_grid, height=32, width=36,
-                                   placeholder_text="MM", font=F_SUB,
+                                   placeholder_text="MM", font=F_SUB, text_color=C_TEXT, placeholder_text_color=C_MUTED,
                                    fg_color=C_VIOLET_DIM, border_color=C_VIOLET_BRD)
         self.date_month.grid(row=0, column=1, padx=(0,8))
 
         self.date_year = CTkEntry(self.date_entry_grid, height=32, width=56,
-                                  placeholder_text="YYYY", font=F_SUB,
+                                  placeholder_text="YYYY", font=F_SUB, text_color=C_TEXT, placeholder_text_color=C_MUTED,
                                   fg_color=C_VIOLET_DIM, border_color=C_VIOLET_BRD)
         self.date_year.grid(row=0, column=2 , padx=(0, 8))
 
         # Task No
-        CTkLabel(form, text="Enter Task No:", font=F_ATLF, text_color=C_TEXT2)\
-            .grid(row=0, column=1, sticky="w")
-        self.taskno_entry = CTkEntry(form, height=32, fg_color=C_TEAL_DIM,
-                                     text_color=C_TEXT, border_color=C_TEAL_BRD)
+        CTkLabel(form, text="Enter Task No :", font=F_ATLF, text_color=C_TEXT2).grid(row=0, column=1, sticky="w")
+        self.taskno_entry = CTkEntry(form, height=32, fg_color=C_VIOLET_DIM,
+                                     text_color=C_TEXT, border_color=C_VIOLET_BRD,
+                                     placeholder_text="Eg. 1, 1A, etc...", placeholder_text_color=C_MUTED)
         self.taskno_entry.grid(row=1, column=1, sticky="ew", pady=(4, 12))
 
         # Subject
-        CTkLabel(form, text="Select Subject", font=F_ATLF, text_color=C_TEXT2)\
-            .grid(row=2, column=0, sticky="w")
+        CTkLabel(form, text="Select Subject :", font=F_ATLF, text_color=C_TEXT2).grid(row=2, column=0, sticky="w")
         self.subject_dropdown = CTkOptionMenu(form, height=32,
                                               values=self.subject_list,
                                               fg_color=C_VIOLET_DIM,
@@ -102,8 +101,7 @@ class AddTaskSubFrame:
         self.subject_dropdown.grid(row=3, column=0, sticky="ew", padx=(0, 8), pady=(4, 12))
 
         # Type
-        CTkLabel(form, text="Select Task Type", font=F_ATLF, text_color=C_TEXT2)\
-            .grid(row=2, column=1, sticky="w")
+        CTkLabel(form, text="Select Task Type :", font=F_ATLF, text_color=C_TEXT2).grid(row=2, column=1, sticky="w")
         self.tasktype_dropdown = CTkOptionMenu(form, height=32,
                                                values=TYPE_OPTIONS,
                                                fg_color=C_VIOLET_DIM,
@@ -112,22 +110,24 @@ class AddTaskSubFrame:
         self.tasktype_dropdown.grid(row=3, column=1, sticky="ew", pady=(4, 12))
 
         # Priority
-        CTkLabel(form, text="Select Priority", font=F_ATLF, text_color=C_TEXT2)\
-            .grid(row=4, column=0, sticky="w")
+        CTkLabel(form, text="Select Priority :", font=F_ATLF, text_color=C_TEXT2).grid(row=4, column=0, sticky="w")
         self.priority_option = CTkSegmentedButton(
             form, values=["High", "Normal"],
-            selected_color=C_TEAL_HOV, unselected_color=C_TEAL_DIM
+            text_color=C_TEXT, text_color_disabled=C_MUTED,
+            selected_color=C_VIOLET, unselected_color=C_VIOLET_DIM,
+            unselected_hover_color=C_VIOLET_BRD, selected_hover_color=C_VIOLET,
+            fg_color=C_BORDER2
         )
         self.priority_option.set("Normal")
         self.priority_option.grid(row=5, column=0, sticky="ew", padx=(0, 8), pady=(4, 12))
 
         # Completion
-        CTkLabel(form, text="Completion", font=F_ATLF, text_color=C_TEXT2).grid(row=4, column=1, sticky="w")
-        self.completed_switch = CTkSwitch(form, text="Completed", progress_color=C_TEAL)
+        CTkLabel(form, text="Completion :", font=F_ATLF, text_color=C_TEXT2).grid(row=4, column=1, sticky="w")
+        self.completed_switch = CTkSwitch(form, text=" < Completed", progress_color=C_TEAL, font=F_MONO)
         self.completed_switch.grid(row=5, column=1, sticky="w", pady=(8, 12))
 
         # Description
-        CTkLabel(form, text="Description", font=("DM Mono", 12), text_color=C_TEXT2).grid(row=6, column=0, sticky="w")
+        CTkLabel(form, text="Description :", font=F_ATLF, text_color=C_TEXT2).grid(row=6, column=0, sticky="w")
 
         self.description_box = CTkTextbox(form, height=150,
                                           fg_color=C_VIOLET_DIM,
@@ -153,9 +153,9 @@ class AddTaskSubFrame:
 
     def save_task(self):
         try:
-            gday = int(self.date_day.get().strip())
-            gmonth = int(self.date_month.get().strip())
-            gyear = int(self.date_year.get().strip())
+            gday = self.date_day.get().strip()
+            gmonth = self.date_month.get().strip()
+            gyear = self.date_year.get().strip()
 
             taskno = int(self.taskno_entry.get())
             subject = self.subject_dropdown.get()
@@ -164,16 +164,31 @@ class AddTaskSubFrame:
             completion = 1 if self.completed_switch.get() else 0
             desc = self.description_box.get("1.0", "end")
 
-            if gday == "" or gday < 0 or gday > 31:
-                raise Exception("Invalid Date - Day")
-            if gmonth == "" or gmonth < 0 or gmonth > 12:
-                raise Exception("Invalid Date - Month")
+            #Ridiculous looking logic just for chackin date validity
             if gyear == "":
                 raise Exception("Invalid Date - Year")
+            year = int(gyear)
+            if gmonth == "" or int(gmonth) < 1 or int(gmonth) > 12:
+                raise Exception("Invalid Date - Month")
+            month = int(gmonth)
+            if gday == "":
+                raise Exception("Invalid Date - Day")
+            day = int(gday)
+            is_leap = (year % 4 == 0)
+            if month in [1, 3, 5, 7, 8, 10, 12]:
+                max_day = 31
+            elif month in [4, 6, 9, 11]:
+                max_day = 30
+            else:
+                max_day = 29 if is_leap else 28
+            if day < 1 or day > max_day:
+                raise Exception("Invalid Date - Day")
 
-            date = f"{gday}-{gmonth}-{gyear}"
-            self.app_state.add_task(date, priority, completion,
-                                    subject, tasktype, taskno, desc)
+            date = f"{int(gday):02}-{int(gmonth):02}-{gyear}"
+            try:
+                self.app_state.add_task(date, priority, completion, subject, tasktype, taskno, desc)
+            except Exception as e:
+                self.error_popup(str(e))
 
             self.clear_form()
 
@@ -192,3 +207,61 @@ class AddTaskSubFrame:
     def go_back(self):
         self.addtask_frame.destroy()
         self.upper_class.click_managetask()
+
+    def error_popup(self, message):
+        popup = CTkToplevel(self.addtask_frame, fg_color=C_PAGE)
+        popup.geometry("340x180")
+        popup.title("Error")
+        popup.resizable(False, False)
+        popup.grab_set()
+
+        # Center popup
+        popup.update_idletasks()
+        px, py = popup.master.winfo_rootx(), popup.master.winfo_rooty()
+        pw, ph = popup.master.winfo_width(), popup.master.winfo_height()
+        popup.geometry(f"340x180+{px + pw // 2 - 170}+{py + ph // 2 - 90}")
+
+        # --- Card ---
+        card = CTkFrame(popup, fg_color=C_CARD, corner_radius=14,
+                        border_width=1, border_color=C_BORDER)
+        card.pack(fill="both", expand=True, padx=12, pady=12)
+
+        # --- Top ---
+        top = CTkFrame(card, fg_color="transparent")
+        top.pack(fill="x", padx=16, pady=(14, 10))
+
+        icon = CTkFrame(top, fg_color=C_ROSE_DIM, width=36, height=36,
+                        corner_radius=8, border_width=1, border_color=C_ROSE_BRD)
+        icon.pack(side="left")
+
+        CTkLabel(icon, text="!", font=("DM Sans", 18, "bold"),
+                 text_color=C_ROSE, width=36, height=36).pack()
+
+        txt = CTkFrame(top, fg_color="transparent")
+        txt.pack(side="left", padx=10)
+
+        CTkLabel(txt,
+                 text="Error",
+                 font=F_LABEL,
+                 text_color=C_TEXT).pack(anchor="w")
+
+        CTkLabel(txt,
+                 text=message,
+                 font=F_SUB,
+                 text_color=C_MUTED,
+                 wraplength=220,
+                 justify="left").pack(anchor="w")
+
+        # --- Button ---
+        CTkButton(card,
+                  text="OK",
+                  width=100,
+                  height=32,
+                  font=F_BTN,
+                  fg_color=C_ROSE_DIM,
+                  hover_color=C_ROSE_HOV,
+                  text_color=C_ROSE,
+                  border_width=1,
+                  border_color=C_ROSE_BRD,
+                  corner_radius=8,
+                  command=popup.destroy).pack(pady=(0, 12))

@@ -33,11 +33,10 @@ class ManageSubjectFrame:
 
         CTkLabel(header, text="Manage Subjects", font=F_HEAD, text_color=C_TEXT).grid(row=0, column=0, sticky="w")
 
-        CTkLabel(
-            header,
-            text="Create subjects, rename them, or remove a subject and all of its tasks.",
-            font=F_SUB,
-            text_color=C_MUTED
+        CTkLabel(header,
+                 text="Create subjects, rename subjects, remove subjects(w/tasks)",
+                 font=F_SUB,
+                 text_color=C_MUTED
         ).grid(row=1, column=0, sticky="w")
 
         self.view_subject_list = CTkLabel(
@@ -54,18 +53,20 @@ class ManageSubjectFrame:
         panel.grid(row=1, column=0, sticky="nsew", padx=(PAD, 9), pady=(0, PAD))
         panel.columnconfigure(0, weight=1)
 
-        CTkLabel(panel, text="Subject Editor", font=F_LABEL, text_color=C_TEXT)\
-            .grid(row=0, column=0, sticky="w", padx=16, pady=(16, 10))
+        label_frame = CTkFrame(panel, fg_color="transparent", height=36)
+        label_frame.grid(row=0, column=0, sticky="ew", padx=16, pady=(16, 10))
 
-        self.status_label = CTkLabel(
-            panel,
-            text="Add a new subject or select one from the right to rename it.",
-            font=F_SUB,
-            text_color=C_MUTED
+        CTkFrame(label_frame, height=22, width=4, fg_color=C_VIOLET).pack(side="left")
+        CTkLabel(label_frame, text="  Subject Editor", font=F_ATLF, text_color=C_TEXT).pack(side="left")
+
+        self.status_label = CTkLabel(panel,
+                                     text="Add or Select",
+                                     font=F_SUB,
+                                     text_color=C_MUTED,
         )
         self.status_label.grid(row=1, column=0, sticky="w", padx=16)
 
-        self.subject_entry = CTkEntry(panel, height=40)
+        self.subject_entry = CTkEntry(panel, height=40, fg_color=C_VIOLET_DIM, border_color=C_BORDER2)
         self.subject_entry.grid(row=2, column=0, sticky="ew", padx=16, pady=(6, 16))
 
         btn_frame = CTkFrame(panel, fg_color="transparent")
@@ -100,8 +101,15 @@ class ManageSubjectFrame:
         container.columnconfigure(0, weight=1)
         container.rowconfigure(1, weight=1)
 
-        self.subject_scroll = CTkScrollableFrame(container, fg_color="transparent")
+        self.subject_scroll = CTkScrollableFrame(container, fg_color="transparent",
+                                                 scrollbar_fg_color="transparent", scrollbar_button_color=C_CARD2,
+                                                 scrollbar_button_hover_color=C_VIOLET)
         self.subject_scroll.grid(row=1, column=0, sticky="nsew", padx=10, pady=(0, 10))
+
+        self.label_subject_list = CTkLabel(container, corner_radius=10, height=32,
+                                           text="Subject List", text_color=C_TEXT2, font=F_ATLF,
+                                           fg_color=C_VIOLET_DIM)
+        self.label_subject_list.grid(row=0, column=0, sticky="ew", padx=16, pady=(8, 12))
 
     # REFRESH VIEW --------------------------------------------
 
@@ -141,7 +149,13 @@ class ManageSubjectFrame:
                      corner_radius=6, font=F_TAG).pack(side="left")
 
             CTkButton(card, text="Select", width=80,
-                      command=lambda s=subject: self.select_subject(s)).pack(side="right", padx=12)
+                      fg_color=C_VIOLET_DIM,
+                      border_color=C_BORDER2,
+                      border_width=2,
+                      text_color=C_TEXT2,
+                      hover_color=C_VIOLET_BRD,
+                      command=lambda s=subject: self.select_subject(s)
+            ).pack(side="right", fill="y", padx=12, pady=(8,12))
 
             self.subject_cards.append(card)
 
@@ -180,8 +194,8 @@ class ManageSubjectFrame:
         self.subject_entry.delete(0, "end")
         if reset_message:
             self.status_label.configure(
-                text="Add a new subject or select one from the right to rename it.",
-                text_color=C_MUTED
+                text="Add or Select",
+                text_color=C_MUTED,
             )
 
     def destroy_gui(self):
