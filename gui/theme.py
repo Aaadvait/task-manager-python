@@ -1,14 +1,15 @@
 #Theme settings
 
 F_HEAD    = ("DM Sans",  18, "bold")
-F_TITLE    = ("DM Sans",  18, "bold")
-F_SUB     = ("DM Sans",  12)
+F_TITLE   = ("DM Sans",  18, "bold")
+F_SUB     = ("DM Sans",  13)
 F_LABEL   = ("DM Sans",  12, "bold")
 F_BODY    = ("DM Sans",  12)
 F_MONO    = ("DM Mono",  12, "bold")
 F_MONO_S  = ("DM Mono",  11)
 F_TAG     = ("DM Mono",  10)
 F_BTN     = ("DM Sans",  11, "bold")
+F_ATLF    = ("Bungee",  14)
 
 C_PAGE       = "#0B0D17"
 C_CARD       = "#12152A"

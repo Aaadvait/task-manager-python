@@ -292,7 +292,7 @@ class ManageTasksFrame:
 
     def add_task(self):
         self.destroy_gui()
-        AddTaskSubFrame(self.parent, self.UController, subject_list)
+        AddTaskSubFrame(self.parent, self.UController)
 
     def display_task(self, x):
         print(f"Clicked on {x}")
