@@ -8,8 +8,9 @@ f_today = today.strftime("%d-%m-%Y")
 class TaskFileRead():
     def __init__(self):
         self.df = pd.read_csv(taskfile_loc)
+        self.sf = pd.read_csv(subject_file_loc)
 
-    # --- FILTERS ---
+    # --- Get Data ------------
 
     def refresh_dataframe(self):
         self.df = pd.read_csv(taskfile_loc)
@@ -37,6 +38,11 @@ class TaskFileRead():
 
     def get_remaining(self):
         return self.df[self.df["completion"] == 0]
+
+    # --- Get Subjects ------------
+
+    def refresh_subject_list(self):
+        self.df = pd.read_csv(taskfile_loc)
 
     # --- SAVE ---
     def save(self):

@@ -1,17 +1,17 @@
 date,priority,completion,subject,tasktype,taskno,taskdisc
-12-04-2026,1,1,DE,Practical,8,This is the Discription of the Task
-12-04-2026,2,1,Math,Assignment,3,Integration worksheet
-12-04-2026,2,0,Physics,Study,5,Revise kinematics notes
+13-04-2026,2,0,DE,Practical,8,This is the Discription of the Task
+15-04-2026,1,0,Math,Assignment,3,Integration worksheet
+14-04-2026,2,0,Physics,Study,5,Revise kinematics notes
 12-04-2026,1,0,CS,Project,1,Implement login system
-13-04-2026,2,0,DE,Study,9,Laplace transforms practice
+16-04-2026,1,0,DE,Study,9,Laplace transforms practice
 13-04-2026,2,0,Math,Assignment,4,Solve differential equations
-12-04-2026,1,0,CS,Practical,2,File handling experiment
-14-04-2026,2,0,Physics,Assignment,6,Numericals on motion
-12-04-2026,2,0,English,Study,1,Read short story
-13-04-2026,2,0,DE,Practical,10,Z-transform problems
-12-04-2026,1,0,CS,Project,3,Dashboard UI design
-14-04-2026,2,0,Math,Study,7,Limits and continuity revision
-13-04-2026,2,0,Physics,Study,8,Work and energy concepts
-12-04-2026,1,0,English,Assignment,2,Essay writing
-14-04-2026,2,0,CS,Practical,4,Database connectivity
+12-04-2026,2,0,CS,Practical,2,File handling experiment
+15-04-2026,1,0,Physics,Assignment,6,Numericals on motion
+14-04-2026,2,0,English,Study,1,Read short story
+16-04-2026,2,0,DE,Practical,10,Z-transform problems
+13-04-2026,1,0,CS,Project,3,Dashboard UI design
+15-04-2026,2,0,Math,Study,7,Limits and continuity revision
+14-04-2026,1,0,Physics,Study,8,Work and energy concepts
+12-04-2026,2,0,English,Assignment,2,Essay writing
+16-04-2026,1,0,CS,Practical,4,Database connectivity
 13-04-2026,2,0,DE,Study,11,Fourier series basics

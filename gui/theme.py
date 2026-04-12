@@ -1,7 +1,8 @@
 #Theme settings
 
 F_HEAD    = ("DM Sans",  18, "bold")
-F_SUB     = ("DM Sans",  11)
+F_TITLE    = ("DM Sans",  18, "bold")
+F_SUB     = ("DM Sans",  12)
 F_LABEL   = ("DM Sans",  12, "bold")
 F_BODY    = ("DM Sans",  12)
 F_MONO    = ("DM Mono",  12, "bold")
@@ -19,6 +20,7 @@ C_TEXT2      = "#C8CBF0"
 C_MUTED      = "#555A8A"
 C_VIOLET     = "#7C6FCD"
 C_VIOLET_DIM = "#1E1A3A"
+C_VIOLET_BRD = "#272248"
 C_RED        = "#E43434"
 C_ROSE       = "#E05C7B"
 C_ROSE_HOV   = "#3A1521"

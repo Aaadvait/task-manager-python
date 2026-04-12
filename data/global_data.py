@@ -9,5 +9,5 @@ taskfile_loc = str(DATA / taskfile_name)
 cfile_name = "completed.csv"
 cfile_loc = str(DATA/ cfile_name)
 
-change_file_name = "change.csv"
-change_file_loc = str(DATA / change_file_name)
+subject_file_name = "subject_file.csv"
+subject_file_loc = str(DATA / subject_file_name)

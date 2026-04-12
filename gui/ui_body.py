@@ -170,7 +170,7 @@ class BodyFrame:
         self.button_click_reset()
         self.active_frame = "MT"
 
-        self.frame_class = ManageTasksFrame(self.mainframe)
+        self.frame_class = ManageTasksFrame(self.mainframe, self)
 
         self.managetask_button.configure(
             fg_color=self.active_color,
