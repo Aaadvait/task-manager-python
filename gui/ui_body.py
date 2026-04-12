@@ -156,7 +156,7 @@ class BodyFrame:
         self.button_click_reset()
         self.active_frame = "DB"
 
-        self.frame_class = DashboardFrame(self.mainframe)
+        self.frame_class = DashboardFrame(self.mainframe, self)
 
         self.dashboard_button.configure(
             fg_color=self.active_color,

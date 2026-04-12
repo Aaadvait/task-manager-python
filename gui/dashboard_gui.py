@@ -11,22 +11,21 @@ PAD = 18
 GAP = 8
 
 class DashboardFrame:
-    def __init__(self, parent):
+    def __init__(self, parent, upper_class):
         self.window_popup  = None
         self.task_button   = None
         self.app_state     = TaskFileRead()
         self.data_frame    = self.app_state.df
+        self.upper_class   = upper_class
 
         # --- DATA ---
         self.high_priority = self.app_state.get_high_priority()
-        self.today_tasks   = self.app_state.df[
-            self.app_state.df["date"] == f_today
-        ]
+        self.today_tasks   = self.app_state.get_today()
+        self.over_due_tasks = self.app_state.get_overdue()
 
-        # merge both
         self.display_tasks = (
-            pd.concat([self.high_priority, self.today_tasks])
-            .drop_duplicates().sort_values(by=["priority", "date"], ascending=[True, True])
+            pd.concat([self.high_priority, self.today_tasks, self.over_due_tasks])
+            .drop_duplicates().sort_values(by=["date", "priority"], ascending=[True, True])
         )
 
         self.task_rows = []
@@ -84,17 +83,31 @@ class DashboardFrame:
                             border_width=1, border_color=C_BORDER)
             tile.grid(row=0, column=col, padx=(pad_l, pad_r), sticky="nsew")
 
-            CTkFrame(tile, fg_color=accent, height=2).pack(fill="x")
+            top_bar = CTkFrame(tile, fg_color=accent, height=2)
+            top_bar.pack(fill="x")
 
             inner = CTkFrame(tile, fg_color="transparent")
             inner.pack(fill="both", expand=True, padx=14, pady=10)
 
-            CTkLabel(inner, text=lbl, font=("DM Mono", 10, "bold"),
-                     text_color=C_MUTED).pack(anchor="w")
-            CTkLabel(inner, text=val, font=("DM Mono", 28, "bold"),
-                     text_color=accent).pack(anchor="w")
-            CTkLabel(inner, text=sub, font=F_MONO_S,
-                     text_color=accent).pack(anchor="w")
+            title_label = CTkLabel(inner, text=lbl, font=("DM Mono", 10, "bold"),
+                                   text_color=C_MUTED)
+            title_label.pack(anchor="w")
+
+            value_label = CTkLabel(inner, text=val, font=("DM Mono", 28, "bold"),
+                                   text_color=accent)
+            value_label.pack(anchor="w")
+
+            sub_label = CTkLabel(inner, text=sub, font=F_MONO_S,
+                                 text_color=accent)
+            sub_label.pack(anchor="w")
+
+            if lbl == "TOTAL":
+                tile.bind("<Button-1>", lambda e: self.upper_class.click_managetask())
+                inner.bind("<Button-1>", lambda e: self.upper_class.click_managetask())
+                title_label.bind("<Button-1>", lambda e: self.upper_class.click_managetask())
+                value_label.bind("<Button-1>", lambda e: self.upper_class.click_managetask())
+                sub_label.bind("<Button-1>", lambda e: self.upper_class.click_managetask())
+                top_bar.bind("<Button-1>", lambda e: self.upper_class.click_managetask())
 
     # ── Task Panel ──────────────────────────────────────────
     def _build_task_panel(self):
@@ -112,7 +125,7 @@ class DashboardFrame:
         left = CTkFrame(hdr, fg_color="transparent")
         left.grid(row=0, column=0, sticky="w")
         CTkFrame(left, fg_color=C_VIOLET, width=4, height=20).grid(row=0, column=0)
-        CTkLabel(left, text="  Tasks",
+        CTkLabel(left, text="  High Priority Tasks",
                  font=("DM Sans", 13, "bold"),
                  text_color=C_TEXT).grid(row=0, column=1)
 
@@ -141,7 +154,7 @@ class DashboardFrame:
 
         self.build_task_list()
 
-    # ── Task List ───────────────────────────────────────────
+    # --- Task List ---------------
     def build_task_list(self):
         for i, row in enumerate(self.display_tasks.itertuples()):
             action = lambda x=row: self.on_click(x)
@@ -152,16 +165,15 @@ class DashboardFrame:
             rf.columnconfigure(1, weight=1)
 
             # color logic
-            color_state = 0
-
-            if row.Index in self.high_priority.index:
-                dot_color = C_ROSE
-                color_state +=1
+            dot_color = "#FF0000"
             if row.Index in self.today_tasks.index:
                 dot_color = C_VIOLET
-                color_state +=1
-            if color_state == 2:
+            if row.Index in self.high_priority.index:
+                dot_color = C_ROSE
+            if row.Index in self.high_priority.index and row.Index in self.today_tasks.index:
                 dot_color = C_RED
+            if row.Index in self.over_due_tasks.index:
+                dot_color = C_BORDER
 
             dot = CTkFrame(rf, fg_color=dot_color, width=8, height=8, corner_radius=4)
             dot.grid(row=0, column=0, padx=(14, 0))
@@ -173,7 +185,7 @@ class DashboardFrame:
                                  font=("DM Sans", 12, "bold"),
                                  fg_color="transparent", hover_color=C_CARD,
                                  text_color=C_TEXT2, anchor="w", height=20,
-                                 command=action)
+                                 command=lambda idx=i: self.complete_task(idx))
             subj_btn.pack(anchor="w")
 
             tag_row = CTkFrame(txt, fg_color="transparent")
@@ -213,7 +225,8 @@ class DashboardFrame:
                 "cbtn_st": 0,
             })
 
-    # ── Handlers (unchanged) ───────────────────────────────
+    # --- Button Click Functions ---------------
+
     def on_click(self, x):
         pass
 
@@ -248,17 +261,45 @@ class DashboardFrame:
 
         self.app_state.save()
 
+        self.app_state.refresh_dataframe()
+        self.high_priority = self.app_state.get_high_priority()
+        self.today_tasks = self.app_state.get_today()
+        self.over_due_tasks = self.app_state.get_overdue()
+
+        self.display_tasks = (
+            pd.concat([self.high_priority, self.today_tasks, self.over_due_tasks])
+            .drop_duplicates().sort_values(by=["date", "priority"], ascending=[True, True])
+        )
+
     def remove_task(self, idx):
         self.window_popup.destroy()
         item = self.task_rows[idx]
-        self.app_state.df = self.app_state.df[
-            self.app_state.df["taskno"] != item["data"].taskno]
+        row = item["data"]
+
+        self.app_state.df = self.app_state.df[~(
+                (self.app_state.df["subject"] == row.subject) &
+                (self.app_state.df["tasktype"] == row.tasktype) &
+                (self.app_state.df["taskno"] == row.taskno)
+        )].reset_index(drop=True)
+
         self.app_state.save()
+
         for t in self.task_rows:
             t["frame"].destroy()
         self.task_rows.clear()
+
+        self.app_state.refresh_dataframe()
         self.high_priority = self.app_state.get_high_priority()
+        self.today_tasks = self.app_state.get_today()
+        self.over_due_tasks = self.app_state.get_overdue()
+
+        self.display_tasks = (
+            pd.concat([self.high_priority, self.today_tasks, self.over_due_tasks])
+            .drop_duplicates().sort_values(by=["date", "priority"], ascending=[True, True])
+        )
+
         self.build_task_list()
+
         self.count_badge.configure(text=f"  {len(self.high_priority)} tasks  ")
 
     def confirmation_window(self, idx):
