@@ -68,10 +68,15 @@ class ManageTasksFrame:
         CTkLabel(topbar_frame, text=f"--- Manager for Tasks ---", font=F_SUB,
                  text_color=C_MUTED, anchor="w").grid(row=1, column=0, sticky="w")
 
-        icon_logo = CTkFrame(topbar_frame, fg_color=C_VIOLET, width=36, height=36, corner_radius=18)
+        icon_logo = CTkFrame(topbar_frame, fg_color='transparent', width=36, height=36, corner_radius=18)
         icon_logo.grid(row=0, column=1, rowspan=2, sticky="e")
-        CTkLabel(icon_logo, text="TM", font=("DM Sans", 14, "bold"),
-                 text_color=C_TEXT, width=36, height=36).pack()
+
+        CTkButton(icon_logo, text=" <> ",
+                  font=("Bungee", 12, "bold"),
+                  fg_color=C_VIOLET_DIM,
+                  border_color=C_VIOLET_BRD,
+                  text_color=C_TEXT, width=32, height=32,
+                  command=self.cw_fct).pack()
 
     # ----- Control Panel --------------------
     def _build_control_panel(self):
@@ -567,3 +572,58 @@ class ManageTasksFrame:
             by=["date", "priority"],
             ascending=[True, True]
         )
+
+    def fix_completed(self):
+
+        self.app_state.df = self.app_state.get_remaining()
+        self.app_state.save()
+        self.window_popup.destroy()
+        self.managetask_frame.destroy()
+        self.UController.click_managetask()
+
+    def cw_fct(self):
+        popup = CTkToplevel(self.managetask_frame, fg_color=C_PAGE)
+        popup.geometry("320x170")
+        popup.grab_set()
+        popup.title("Confirm Removal")
+        popup.resizable(False, False)
+        self.window_popup = popup
+
+        popup.update_idletasks()
+        px, py = popup.master.winfo_rootx(), popup.master.winfo_rooty()
+        pw, ph = popup.master.winfo_width(), popup.master.winfo_height()
+        popup.geometry(f"320x170+{px + pw // 2 - 160}+{py + ph // 2 - 85}")
+
+        card = CTkFrame(popup, fg_color=C_CARD, corner_radius=14,
+                        border_width=1, border_color="#2D1F40")
+        card.pack(fill="both", expand=True, padx=12, pady=12)
+
+        top = CTkFrame(card, fg_color="transparent")
+        top.pack(fill="x", padx=18, pady=(16, 12))
+
+        icon_bg = CTkFrame(top, fg_color=C_ROSE_DIM, width=36, height=36,
+                           corner_radius=8, border_width=1, border_color=C_ROSE_BRD)
+        icon_bg.pack(side="left")
+        CTkLabel(icon_bg, text="<!>", font=("DM Sans", 18, "bold"),
+                 text_color=C_ROSE, width=36, height=36).pack()
+
+        txt = CTkFrame(top, fg_color="transparent")
+        txt.pack(side="left", padx=12)
+        CTkLabel(txt, text="Fix Completed Tasks?",
+                 font=("DM Sans", 13, "bold"), text_color=C_TEXT,
+                 anchor="w").pack(anchor="w")
+        CTkLabel(txt, text="This action cannot be undone.",
+                 font=F_SUB, text_color=C_MUTED, anchor="w").pack(anchor="w")
+
+        brow = CTkFrame(card, fg_color="transparent")
+        brow.pack(pady=(0, 14))
+        CTkButton(brow, text="Yes, Fix", width=120, height=32,
+                  font=("DM Sans", 12, "bold"),
+                  fg_color=C_ROSE, hover_color="#B8405E",
+                  text_color="#fff", corner_radius=8,
+                  command=self.fix_completed).pack(side="left", padx=(0, 8))
+        CTkButton(brow, text="Cancel", width=100, height=32,
+                  font=("DM Sans", 12, "bold"),
+                  fg_color=C_CARD2, hover_color=C_BORDER,
+                  text_color="#9B8FE8", border_width=1, border_color=C_BORDER2,
+                  corner_radius=8, command=popup.destroy).pack(side="left")

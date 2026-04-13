@@ -1,17 +1,17 @@
 date,priority,completion,subject,tasktype,taskno,taskdisc
-16-04-2026,1,0,DE,Practical,8,Complete practical on basic circuit analysis
+16-04-2026,1,0,Digital Electronics,Practical,8,Complete practical on basic circuit analysis
 14-04-2026,2,0,Math,Assignment,3,Solve integration worksheet problems
 18-04-2026,2,0,Physics,Study,5,Revise kinematics concepts and formulas
 13-04-2026,1,0,CS,Project,1,Develop basic login system functionality
-17-04-2026,2,0,DE,Study,9,Practice Laplace transform problems
+17-04-2026,2,0,Digital Electronics,Study,9,Practice Laplace transform problems
 15-04-2026,2,0,Math,Assignment,4,Solve differential equations set
 13-04-2026,1,0,CS,Practical,2,Perform file handling experiment
 18-04-2026,2,0,Physics,Assignment,6,Solve motion-based numerical problems
 14-04-2026,2,0,English,Study,1,Read and analyze assigned short story
-16-04-2026,2,0,DE,Practical,10,Solve Z-transform practical problems
+16-04-2026,2,0,Digital Electronics,Practical,10,Solve Z-transform practical problems
 15-04-2026,1,0,CS,Project,3,Design and refine dashboard UI layout
 17-04-2026,2,0,Math,Study,7,Revise limits and continuity concepts
 13-04-2026,2,0,Physics,Study,8,Study work and energy concepts in detail
 18-04-2026,1,0,English,Assignment,2,Write and refine essay draft
 14-04-2026,2,0,CS,Practical,4,Implement database connectivity task
-16-04-2026,2,0,DE,Study,11,Understand basics of Fourier series
+16-04-2026,2,0,Digital Electronics,Study,11,Understand basics of Fourier series
