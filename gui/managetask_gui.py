@@ -101,14 +101,14 @@ class ManageTasksFrame:
             tile.grid(row=0, column=col, padx=(pad_l, pad_r), sticky="nsew")
             tile.grid_propagate(False)
 
-            # --- Accent top bar
+            # --- Accent top bar ---------------
             top_bar = CTkFrame(tile, fg_color=accent, height=2)
             top_bar.pack(fill="x")
 
             inner = CTkFrame(tile, fg_color="transparent")
             inner.pack(fill="both", expand=True, padx=14, pady=10)
 
-            # --- Title
+            # --- Title ---------------
             CTkLabel(
                 inner,
                 text=lbl,
@@ -116,7 +116,7 @@ class ManageTasksFrame:
                 text_color=C_MUTED
             ).pack(anchor="w")
 
-            # --- Main control
+            # --- Main control ---------------
             if col == 2:
                 CTkButton(
                     inner,
@@ -149,7 +149,7 @@ class ManageTasksFrame:
                     dynamic_resizing=False  # <-- This took way too much of my time to figure out and stop the window from resiznig
                 ).pack(anchor="w", fill="x", pady=(6, 4))
 
-            # --- Subtitle
+            # --- Subtitle ---------------
             CTkLabel(
                 inner,
                 text=sub,
@@ -215,7 +215,7 @@ class ManageTasksFrame:
                 rf.grid(row=i, column=0, sticky="ew", padx=4, pady=GAP // 2)
                 rf.columnconfigure(1, weight=1)
 
-                # color logic
+                # color logic for the dot indicator thingy
                 dot_color = C_VIOLET
                 if row.Index in self.todays_tasks.index:
                     dot_color = C_ROSE

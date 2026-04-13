@@ -1,7 +1,6 @@
 from data.global_data import *
 from pathlib import Path
 
-
 def tsum_generate(file_name, file_tsum):
     file_name_loc = Path(file_name)
     if not file_name_loc.exists():

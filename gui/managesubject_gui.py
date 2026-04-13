@@ -24,7 +24,7 @@ class ManageSubjectFrame:
         self._build_subject_panel()
         self.refresh_view()
 
-    # HEADER --------------------------------------------------
+    # ----- HEADER -------------------------
 
     def _build_header(self):
         header = CTkFrame(self.managesubject_frame, fg_color="transparent")
@@ -45,7 +45,7 @@ class ManageSubjectFrame:
         )
         self.view_subject_list.grid(row=0, column=1, rowspan=2, sticky="e")
 
-    # LEFT PANEL ---------------------------------------------
+    # ----- LEFT PANEL -------------------------
 
     def _build_editor_panel(self):
         panel = CTkFrame(self.managesubject_frame, fg_color=C_CARD,
@@ -92,7 +92,7 @@ class ManageSubjectFrame:
                   fg_color=C_TEAL_DIM, text_color=C_TEAL,
                   command=self.clear_form).grid(row=0, column=1, sticky="ew", padx=(6, 0))
 
-    # RIGHT PANEL --------------------------------------------
+    # ----- RIGHT PANEL -------------------------
 
     def _build_subject_panel(self):
         container = CTkFrame(self.managesubject_frame, fg_color=C_CARD,
@@ -111,7 +111,7 @@ class ManageSubjectFrame:
                                            fg_color=C_VIOLET_DIM)
         self.label_subject_list.grid(row=0, column=0, sticky="ew", padx=16, pady=(8, 12))
 
-    # REFRESH VIEW --------------------------------------------
+    # ----- REFRESH VIEW -------------------------
 
     def refresh_view(self):
         self.app_state.refresh_dataframe()
@@ -159,7 +159,7 @@ class ManageSubjectFrame:
 
             self.subject_cards.append(card)
 
-    # ACTIONS -------------------------------------------------
+    # ----- ACTIONS -------------------------
 
     def select_subject(self, subject):
         self.selected_subject = subject

@@ -221,12 +221,10 @@ class AddTaskSubFrame:
         pw, ph = popup.master.winfo_width(), popup.master.winfo_height()
         popup.geometry(f"340x180+{px + pw // 2 - 170}+{py + ph // 2 - 90}")
 
-        # --- Card ---
         card = CTkFrame(popup, fg_color=C_CARD, corner_radius=14,
                         border_width=1, border_color=C_BORDER)
         card.pack(fill="both", expand=True, padx=12, pady=12)
 
-        # --- Top ---
         top = CTkFrame(card, fg_color="transparent")
         top.pack(fill="x", padx=16, pady=(14, 10))
 

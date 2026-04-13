@@ -288,7 +288,7 @@ class DashboardFrame:
                  text_color=C_TEXT2,
                  corner_radius=6).pack(side="left")
 
-        # --- Meta ---
+        # --- Task Discription ---
         meta = CTkFrame(card, fg_color="transparent")
         meta.pack(anchor="w", padx=16, pady=(0, 10))
 

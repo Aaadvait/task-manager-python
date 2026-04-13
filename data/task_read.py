@@ -11,16 +11,13 @@ class TaskFileRead():
         self.df = pd.read_csv(taskfile_loc)
         self.sf = pd.read_csv(subject_file_loc)
 
-    # --- ADD TASK ------------------------
+    # ----- ADD TASK -------------------------
 
     def add_task(self, date, priority, completion, subject, tasktype, taskno, taskdisc):
-
-        # --- Normalize inputs ---
         subject = subject.strip()
         tasktype = tasktype.strip()
         taskno = int(taskno)
 
-        # --- Duplicate check ---
         mask = (
                 (self.df["subject"] == subject) &
                 (self.df["tasktype"] == tasktype) &
@@ -29,7 +26,6 @@ class TaskFileRead():
         if mask.any():
             raise Exception("Duplicate Task: same subject, type, and task number already exists")
 
-        # --- Add task if no DUplicate found
         new_row = pd.DataFrame([{
             "date": date,
             "priority": int(priority),
@@ -40,32 +36,28 @@ class TaskFileRead():
             "taskdisc": taskdisc.strip()
         }])
 
-        # --- Insert ---------------
         self.df = pd.concat([self.df, new_row], ignore_index=True)
         self.save()
 
-    # --- Get Data ------------
+    # ----- Get Data from the file -------------------------
 
     def refresh_dataframe(self):
         self.df = pd.read_csv(taskfile_loc)
 
     def get_high_priority(self):
-        return self.df[
-            (self.df["priority"] == 1) &
-            (self.df["completion"] == 0)
-            ]
+        return self.df[(self.df["priority"] == 1) &
+                       (self.df["completion"] == 0)
+        ]
 
     def get_today(self):
-        return self.df[
-            (self.df["date"] == f_today) &
-            (self.df["completion"] == 0)
-            ]
+        return self.df[(self.df["date"] == f_today) &
+                       (self.df["completion"] == 0)
+        ]
 
     def get_overdue(self):
-        return self.df[
-            (self.df["date"] < f_today) &
-            (self.df["completion"] == 0)
-            ]
+        return self.df[(self.df["date"] < f_today) &
+                       (self.df["completion"] == 0)
+        ]
 
     def get_completed(self):
         return self.df[self.df["completion"] == 1]
@@ -104,11 +96,9 @@ class TaskFileRead():
         if old not in self.sf["subject"].values:
             raise Exception("Subject not found")
 
-        # update subject list
         self.sf.loc[self.sf["subject"] == old, "subject"] = new
         self.sf.to_csv(subject_file_loc, index=False)
 
-        # update tasks as well
         self.df.loc[self.df["subject"] == old, "subject"] = new
         self.save()
 
@@ -116,11 +106,9 @@ class TaskFileRead():
         if subject not in self.sf["subject"].values:
             raise Exception("Subject not found")
 
-        # remove from subject list
         self.sf = self.sf[self.sf["subject"] != subject].reset_index(drop=True)
         self.sf.to_csv(subject_file_loc, index=False)
 
-        # remove all related tasks
         self.df = self.df[self.df["subject"] != subject].reset_index(drop=True)
         self.save()
 

@@ -1,6 +1,9 @@
 from data.global_data import *
 from pathlib import Path
 
+# Checks if files are present for the functioning of the task manager
+# If they are not, it will create them
+
 class InitializeFiles:
     def __init__(self):
 
@@ -32,4 +35,3 @@ class InitializeFiles:
             tasks_csv.write("date,priority,completion,subject,tasktype,taskno,taskdisc\n")
             tasks_csv.close()
             print(f"Created: {self.file_path_tasks_csv}")
-
